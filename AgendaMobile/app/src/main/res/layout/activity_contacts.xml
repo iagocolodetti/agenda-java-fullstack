@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="4dp"
+    android:paddingBottom="6dp"
+    android:paddingHorizontal="16dp"
+    android:orientation="vertical"
+    tools:context=".ContactsActivity">
+
+    <TextView
+        android:id="@+id/contacts_tvLogout"
+        style="@style/tv_logout_style" />
+
+    <TextView
+        android:id="@+id/contacts_tvMessage"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/contacts_pullToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="10dp">
+
+        <ListView
+            android:id="@+id/contacts_lvContacts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/listview_border"
+            android:divider="#AFBEBEBE"
+            android:dividerHeight="2dp" >
+
+        </ListView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/contacts_btNewContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-70dp"
+        android:layout_marginEnd="4dp"
+        android:layout_gravity="end"
+        android:clickable="true"
+        app:tint="@color/white"
+        app:srcCompat="@drawable/ic_baseline_add_24"
+        app:backgroundTint="@color/green"
+        app:maxImageSize="36sp"
+        app:rippleColor="@color/ripple_green" />
+</LinearLayout>

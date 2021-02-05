@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="4dp"
+    android:paddingBottom="6dp"
+    android:paddingHorizontal="16dp"
+    android:orientation="vertical"
+    tools:context=".UpdateContactActivity">
+
+    <TextView
+        android:id="@+id/update_contact_tvLogout"
+        style="@style/tv_logout_style" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbarThumbVertical="@drawable/custom_scrollbar"
+        android:fadeScrollbars="true"
+        android:scrollbarSize="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/name"
+                android:textColorHint="@color/black"
+                app:hintTextColor="@color/text_input_hint_text_color"
+                app:boxStrokeColor="@color/text_input_box_stroke_color"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/update_contact_tietName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:hint="@string/alias"
+                android:textColorHint="@color/black"
+                app:hintTextColor="@color/text_input_hint_text_color"
+                app:boxStrokeColor="@color/text_input_box_stroke_color"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/update_contact_tietAlias"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/update_contact_tvPhones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:layout_marginBottom="2dp"
+                android:visibility="gone"
+                android:text="@string/phones"
+                android:textSize="17sp"
+                android:textColor="#FF444444" />
+
+            <ListView
+                android:id="@+id/update_contact_lvPhones"
+                android:tag="lvPhones"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:visibility="gone"
+                android:background="@drawable/listview_border"
+                android:divider="#AFBEBEBE"
+                android:dividerHeight="1dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/update_contact_tilPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:hint="@string/phone"
+                android:textColorHint="@color/black"
+                app:hintTextColor="@color/text_input_hint_text_color"
+                app:boxStrokeColor="@color/text_input_box_stroke_color"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/add"
+                app:endIconTint="@null"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/update_contact_tietPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/update_contact_tvEmails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:layout_marginBottom="2dp"
+                android:visibility="gone"
+                android:text="@string/emails"
+                android:textSize="17sp"
+                android:textColor="#FF444444" />
+
+            <ListView
+                android:id="@+id/update_contact_lvEmails"
+                android:tag="lvEmails"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:visibility="gone"
+                android:background="@drawable/listview_border"
+                android:divider="#AFBEBEBE"
+                android:dividerHeight="1dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/update_contact_tilEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:hint="@string/email"
+                android:textColorHint="@color/black"
+                app:hintTextColor="@color/text_input_hint_text_color"
+                app:boxStrokeColor="@color/text_input_box_stroke_color"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/add"
+                app:endIconTint="@null"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/update_contact_tietEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/update_contact_tvMessage"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textAlignment="center"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/update_contact_btUpdate"
+                style="@style/Widget.AppCompat.Button"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/blue"
+                android:text="@string/update" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

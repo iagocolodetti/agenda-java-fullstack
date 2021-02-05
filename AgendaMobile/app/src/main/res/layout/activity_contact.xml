@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="4dp"
+    android:paddingBottom="6dp"
+    android:paddingHorizontal="16dp"
+    android:orientation="vertical"
+    tools:context=".ContactActivity">
+
+    <TextView
+        android:id="@+id/contact_tvLogout"
+        style="@style/tv_logout_style" />
+
+    <TextView
+        android:id="@+id/contact_tvMessage"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textAlignment="center"
+        android:textSize="16sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbarThumbVertical="@drawable/custom_scrollbar"
+        android:fadeScrollbars="true"
+        android:scrollbarSize="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:id="@+id/contact_tvName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="12dp"
+                    android:text="@string/name"
+                    android:textSize="22sp"
+                    android:textColor="#FF444444" />
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:id="@+id/contact_btUpdate"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="12dp"
+                    android:insetLeft="0dp"
+                    android:insetTop="0dp"
+                    android:insetRight="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/ic_baseline_edit_24"
+                    app:iconSize="26sp"
+                    app:iconTint="@color/grey"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:strokeWidth="3dp"
+                    app:strokeColor="@color/grey"
+                    app:backgroundTint="@android:color/transparent"
+                    app:cornerRadius="2.5dp"
+                    app:rippleColor="@color/light_grey" />
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:id="@+id/contact_btDelete"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:insetLeft="0dp"
+                    android:insetTop="0dp"
+                    android:insetRight="0dp"
+                    android:insetBottom="0dp"
+                    app:icon="@drawable/ic_baseline_delete_24"
+                    app:iconSize="26sp"
+                    app:iconTint="@color/red"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:strokeWidth="3dp"
+                    app:strokeColor="@color/red"
+                    app:backgroundTint="@android:color/transparent"
+                    app:cornerRadius="2.5dp"
+                    app:rippleColor="@color/light_grey" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/contact_tvAlias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alias"
+                android:textSize="18sp"
+                android:textColor="#FF444444"
+                android:textStyle="italic" />
+
+            <TextView
+                android:id="@+id/contact_tvPhones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:layout_marginBottom="2dp"
+                android:visibility="gone"
+                android:text="@string/phones"
+                android:textSize="17sp"
+                android:textColor="#FF444444" />
+
+            <ListView
+                android:id="@+id/contact_lvPhones"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:visibility="gone"
+                android:background="@drawable/listview_border"
+                android:divider="#AFBEBEBE"
+                android:dividerHeight="1dp" />
+
+            <TextView
+                android:id="@+id/contact_tvEmails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:layout_marginBottom="2dp"
+                android:visibility="gone"
+                android:text="@string/emails"
+                android:textSize="17sp"
+                android:textColor="#FF444444" />
+
+            <ListView
+                android:id="@+id/contact_lvEmails"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:visibility="gone"
+                android:background="@drawable/listview_border"
+                android:divider="#AFBEBEBE"
+                android:dividerHeight="1dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
