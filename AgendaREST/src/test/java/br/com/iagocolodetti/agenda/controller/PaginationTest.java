@@ -44,8 +44,6 @@ public class PaginationTest {
     private PhoneRepository phoneRepository;
     @Autowired
     private EmailRepository emailRepository;
-    
-    String contactsJson;
 
     @BeforeAll
     public void setup() {
@@ -122,7 +120,7 @@ public class PaginationTest {
     @Test
     @Order(1)
     public void getFirstPageFiveItems() {
-        contactsJson = given().accept(ContentType.JSON)
+        given().accept(ContentType.JSON)
                 .contentType(ContentType.JSON)
                 .header("authorization", authorization)
                 .queryParams("page", "0", "size", "5")
@@ -143,8 +141,6 @@ public class PaginationTest {
                 .when().get("/contacts")
                 .then().statusCode(HttpStatus.SC_OK)
                 .and()
-                .assertThat().body("", Matchers.hasSize(4))
-                .and()
-                .assertThat().body("", Matchers.not(Matchers.equalTo(contactsJson)));
+                .assertThat().body("", Matchers.hasSize(4));
     }
 }
