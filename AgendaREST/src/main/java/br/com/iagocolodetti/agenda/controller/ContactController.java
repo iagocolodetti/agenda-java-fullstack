@@ -9,6 +9,8 @@ import br.com.iagocolodetti.agenda.repository.ContactRepository;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -49,10 +52,16 @@ public class ContactController {
     }
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> read(HttpServletRequest request) {
+    public ResponseEntity<?> read(HttpServletRequest request, @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
         try {
+            Pageable pageable;
+            if (page == null || page < 0) {
+                pageable = Pageable.unpaged();
+            } else {
+                pageable = PageRequest.of(page, ((size == null || size < 1) ? 10 : size));
+            }
             return new ResponseEntity<>(
-                    repository.findAllByUser(Integer.parseInt((String) request.getAttribute("userid"))),
+                    repository.findAllByUser(Integer.parseInt((String) request.getAttribute("userid")), pageable),
                     HttpStatus.OK);
         } catch (NumberFormatException ex) {
             return ResponseEntity
