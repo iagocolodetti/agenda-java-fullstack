@@ -3,7 +3,7 @@ package br.com.iagocolodetti.agenda.controller;
 import br.com.iagocolodetti.agenda.error.CustomJsonError;
 import br.com.iagocolodetti.agenda.model.User;
 import br.com.iagocolodetti.agenda.repository.UserRepository;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ public class UserController {
     @Autowired
     private UserRepository repository;
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE}, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> create(HttpServletRequest request, @RequestBody User user) {
         try {
             user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));

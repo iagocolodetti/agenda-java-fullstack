@@ -1,8 +1,10 @@
 package br.com.iagocolodetti.agenda.security;
 
+
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 /**
  *
@@ -10,7 +12,7 @@ import android.preference.PreferenceManager;
  */
 public class AuthUtils {
 
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
 
     public AuthUtils(Context context) {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);

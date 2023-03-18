@@ -5,15 +5,22 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Date;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import io.jsonwebtoken.io.DecodingException;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+
+import javax.crypto.SecretKey;
 
 /**
  *
@@ -22,9 +29,10 @@ import org.springframework.security.core.Authentication;
 public class TokenAuthenticationService {
 
     private static final long EXPIRATION = 1000 * 60 * 60;
-    private static final String SECRET = "MeuSegredo123";
     private static final String TOKEN_PREFIX = "Bearer";
     private static final String HEADER_STRING = "Authorization";
+
+    private static final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     public static void addAuthentication(HttpServletResponse response, int userid, String username) {
         String JWT = Jwts.builder()
@@ -33,7 +41,7 @@ public class TokenAuthenticationService {
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .signWith(secretKey)
                 .compact();
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + JWT);
         response.setDateHeader("Expires", new Date(System.currentTimeMillis() + EXPIRATION).getTime());
@@ -41,9 +49,10 @@ public class TokenAuthenticationService {
 
     public static Authentication getAuthentication(HttpServletRequest request) throws AuthenticationException {
         try {
-            Claims body = Jwts.parser()
-                    .setSigningKey(SECRET)
-                    .parseClaimsJws(request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX, ""))
+            Claims body = Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(request.getHeader(HEADER_STRING).replace(TOKEN_PREFIX, "").trim())
                     .getBody();
             String userid = body.getId();
             String username = body.getSubject();
@@ -57,7 +66,7 @@ public class TokenAuthenticationService {
             throw new AuthenticationException(HttpStatus.BAD_REQUEST, "Token de autenticação não informado no cabeçalho");
         } catch (ExpiredJwtException ex) {
             throw new AuthenticationException(HttpStatus.UNAUTHORIZED, "Token de autenticação expirado");
-        } catch (MalformedJwtException | SignatureException | UnsupportedJwtException ex) {
+        } catch (MalformedJwtException | SignatureException | UnsupportedJwtException | DecodingException ex) {
             throw new AuthenticationException(HttpStatus.UNAUTHORIZED, "Token de autenticação inválido");
         }
     }

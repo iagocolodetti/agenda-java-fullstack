@@ -4,11 +4,14 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
+
 import br.com.iagocolodetti.agenda.R;
 
 public class CustomAlertMessage  {
 
-    private Context context = null;
+    private final Context context;
 
     public CustomAlertMessage(Context context) {
         this.context = context;
@@ -19,14 +22,14 @@ public class CustomAlertMessage  {
             textView.setVisibility(View.VISIBLE);
             textView.setText(message);
             if (type.equals("success")) {
-                textView.setTextColor(context.getResources().getColor(R.color.alert_text_success));
-                textView.setBackground(context.getDrawable(R.drawable.alert_success));
+                textView.setTextColor(ContextCompat.getColor(context, R.color.alert_text_success));
+                textView.setBackground(AppCompatResources.getDrawable(context, R.drawable.alert_success));
             } else if (type.equals("danger")) {
-                textView.setTextColor(context.getResources().getColor(R.color.alert_text_danger));
-                textView.setBackground(context.getDrawable(R.drawable.alert_danger));
+                textView.setTextColor(ContextCompat.getColor(context, R.color.alert_text_danger));
+                textView.setBackground(AppCompatResources.getDrawable(context, R.drawable.alert_danger));
             } else {
-                textView.setTextColor(context.getResources().getColor(R.color.black));
-                textView.setBackgroundColor(context.getResources().getColor(R.color.white));
+                textView.setTextColor(ContextCompat.getColor(context, R.color.black));
+                textView.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
             }
         }
     }

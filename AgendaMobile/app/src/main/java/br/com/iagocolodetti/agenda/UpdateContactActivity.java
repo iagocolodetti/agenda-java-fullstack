@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -47,6 +46,9 @@ public class UpdateContactActivity extends AppCompatActivity {
     private int lastPhoneID = 0;
     private int lastEmailID = 0;
 
+    private ArrayAdapter<Phone> phoneAdapter;
+    private ArrayAdapter<Email> emailAdapter;
+
     private void logout(String message) {
         au.removeAuth();
         Intent intent = new Intent(UpdateContactActivity.this, LoginActivity.class);
@@ -57,21 +59,13 @@ public class UpdateContactActivity extends AppCompatActivity {
     }
 
     private void setMessageInsideThread(String message, String type) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                cam.setMessage(tvMessage, message, type);
-            }
-        });
+        runOnUiThread(() -> cam.setMessage(tvMessage, message, type));
     }
 
     private void setButtonEnabled(boolean enable) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (btUpdate != null) {
-                    btUpdate.setEnabled(enable);
-                }
+        runOnUiThread(() -> {
+            if (btUpdate != null) {
+                btUpdate.setEnabled(enable);
             }
         });
     }
@@ -122,6 +116,8 @@ public class UpdateContactActivity extends AppCompatActivity {
 
         au = new AuthUtils(this);
 
+        cam = new CustomAlertMessage(this);
+
         TextView tvLogout = findViewById(R.id.update_contact_tvLogout);
         TextInputEditText tietName = findViewById(R.id.update_contact_tietName);
         TextInputEditText tietAlias = findViewById(R.id.update_contact_tietAlias);
@@ -132,12 +128,7 @@ public class UpdateContactActivity extends AppCompatActivity {
         tvMessage = findViewById(R.id.update_contact_tvMessage);
         btUpdate = findViewById(R.id.update_contact_btUpdate);
 
-        tvLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logout(null);
-            }
-        });
+        tvLogout.setOnClickListener(view -> logout(null));
 
         try {
             contact = new Contact(getIntent().getStringExtra("contact"));
@@ -146,81 +137,69 @@ public class UpdateContactActivity extends AppCompatActivity {
             setPhones();
             setEmails();
 
-            tilPhone.setEndIconOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Phone p = new Phone();
-                    p.setId(--lastPhoneID);
-                    p.setPhone(tietPhone.getText().toString());
-                    contact.getPhone().add(p);
-                    tietPhone.setText("");
-                    setPhones();
-                }
+            tilPhone.setEndIconOnClickListener(view -> {
+                Phone p = new Phone();
+                p.setId(--lastPhoneID);
+                p.setPhone(tietPhone.getText().toString());
+                contact.getPhone().add(p);
+                tietPhone.setText("");
+                setPhones();
             });
 
-            tilEmail.setEndIconOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Email e = new Email();
-                    e.setId(--lastEmailID);
-                    e.setEmail(tietEmail.getText().toString());
-                    contact.getEmail().add(e);
-                    tietEmail.setText("");
-                    setEmails();
-                }
+            tilEmail.setEndIconOnClickListener(view -> {
+                Email e = new Email();
+                e.setId(--lastEmailID);
+                e.setEmail(tietEmail.getText().toString());
+                contact.getEmail().add(e);
+                tietEmail.setText("");
+                setEmails();
             });
 
-            btUpdate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    contact.setName(tietName.getText().toString());
-                    contact.setAlias(tietAlias.getText().toString());
-                    if (contact.getName().isEmpty()) {
-                        cam.setMessage(tvMessage, getResources().getString(R.string.name_empty), "danger");
-                    } else if (contact.getAlias().isEmpty()) {
-                        cam.setMessage(tvMessage, getResources().getString(R.string.alias_empty), "danger");
-                    } else if (contact.getPhone().isEmpty()) {
-                        cam.setMessage(tvMessage, getResources().getString(R.string.phones_empty), "danger");
-                    } else if (contact.getEmail().isEmpty()) {
-                        cam.setMessage(tvMessage, getResources().getString(R.string.emails_empty), "danger");
-                    } else {
-                        ContactService cs = new ContactService();
-                        Thread thread = new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                setButtonEnabled(false);
-                                try {
-                                    for (int i = 0; i < contact.getPhone().size(); i++) {
-                                        if (contact.getPhone().get(i).getId() < 0) {
-                                            contact.getPhone().get(i).setId(null);
-                                        }
-                                    }
-                                    for (int i = 0; i < contact.getEmail().size(); i++) {
-                                        if (contact.getEmail().get(i).getId() < 0) {
-                                            contact.getEmail().get(i).setId(null);
-                                        }
-                                    }
-                                    cs.update(au.getAuth(), contact);
-                                    Intent intent = new Intent(UpdateContactActivity.this, ContactsActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    intent.putExtra("contactUpdated", getResources().getString(R.string.contact_updated_start) + contact.getName() + getResources().getString(R.string.contact_updated_end));
-                                    startActivity(intent);
-                                    finish();
-                                } catch (CustomResponseException ex) {
-                                    if (ex.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                                        logout(ex.getMessage());
-                                    } else {
-                                        setMessageInsideThread(getResources().getString(R.string.error_start) + ex.getMessage() + ".", "danger");
-                                    }
-                                } catch (IOException ex) {
-                                    setMessageInsideThread(getResources().getString(R.string.internal_error), "danger");
-                                } finally {
-                                    setButtonEnabled(true);
+            btUpdate.setOnClickListener(view -> {
+                contact.setName(tietName.getText().toString());
+                contact.setAlias(tietAlias.getText().toString());
+                if (contact.getName().isEmpty()) {
+                    cam.setMessage(tvMessage, getResources().getString(R.string.name_empty), "danger");
+                } else if (contact.getAlias().isEmpty()) {
+                    cam.setMessage(tvMessage, getResources().getString(R.string.alias_empty), "danger");
+                } else if (contact.getPhone().isEmpty() || !contact.getPhone().stream().anyMatch(p -> !p.isDeleted())) {
+                    cam.setMessage(tvMessage, getResources().getString(R.string.phones_empty), "danger");
+                } else if (contact.getEmail().isEmpty() || !contact.getEmail().stream().anyMatch(e -> !e.isDeleted())) {
+                    cam.setMessage(tvMessage, getResources().getString(R.string.emails_empty), "danger");
+                } else {
+                    ContactService cs = new ContactService();
+                    Thread thread = new Thread(() -> {
+                        setButtonEnabled(false);
+                        try {
+                            for (int i = 0; i < contact.getPhone().size(); i++) {
+                                if (contact.getPhone().get(i).getId() < 0) {
+                                    contact.getPhone().get(i).setId(null);
                                 }
                             }
-                        });
-                        thread.start();
-                    }
+                            for (int i = 0; i < contact.getEmail().size(); i++) {
+                                if (contact.getEmail().get(i).getId() < 0) {
+                                    contact.getEmail().get(i).setId(null);
+                                }
+                            }
+                            cs.update(au.getAuth(), contact);
+                            Intent intent = new Intent(UpdateContactActivity.this, ContactsActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.putExtra("contactUpdated", getResources().getString(R.string.contact_updated_start) + contact.getName() + getResources().getString(R.string.contact_updated_end));
+                            startActivity(intent);
+                            finish();
+                        } catch (CustomResponseException ex) {
+                            if (ex.getStatus() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                                logout(ex.getMessage());
+                            } else {
+                                setMessageInsideThread(getResources().getString(R.string.error_start) + ex.getMessage() + ".", "danger");
+                            }
+                        } catch (IOException ex) {
+                            setMessageInsideThread(getResources().getString(R.string.internal_error), "danger");
+                        } finally {
+                            setButtonEnabled(true);
+                        }
+                    });
+                    thread.start();
                 }
             });
         } catch (IllegalArgumentException ex) {
@@ -240,6 +219,7 @@ public class UpdateContactActivity extends AppCompatActivity {
             } else {
                 contact.getPhone().get(index).setDeleted(true);
             }
+            phoneAdapter.notifyDataSetChanged();
             setPhones();
         } else if (tag.equals("lvEmails")) {
             int index = getIndexOfEmailID(getEmailsIgnoreDeleted().get(position).getId());
@@ -248,6 +228,7 @@ public class UpdateContactActivity extends AppCompatActivity {
             } else {
                 contact.getEmail().get(index).setDeleted(true);
             }
+            emailAdapter.notifyDataSetChanged();
             setEmails();
         }
     }
@@ -258,7 +239,7 @@ public class UpdateContactActivity extends AppCompatActivity {
         if (!contact.getPhone().isEmpty()) {
             tvPhones.setVisibility(View.VISIBLE);
             List<Phone> phones = getPhonesIgnoreDeleted();
-            ArrayAdapter<Phone> adapter = new ArrayAdapter<Phone>(UpdateContactActivity.this, R.layout.list_textview_item_with_button, R.id.tvListViewItemWithButton, phones) {
+            phoneAdapter = new ArrayAdapter<>(UpdateContactActivity.this, R.layout.list_textview_item_with_button, R.id.tvListViewItemWithButton, phones) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
                     View view = super.getView(position, convertView, parent);
@@ -267,7 +248,7 @@ public class UpdateContactActivity extends AppCompatActivity {
                     return view;
                 }
             };
-            lvPhones.setAdapter(adapter);
+            lvPhones.setAdapter(phoneAdapter);
             lvPhones.setVisibility(View.VISIBLE);
             ListViewAdapter.setListViewHeightBasedOnChildren(lvPhones);
         } else {
@@ -282,7 +263,7 @@ public class UpdateContactActivity extends AppCompatActivity {
         if (!contact.getEmail().isEmpty()) {
             tvEmails.setVisibility(View.VISIBLE);
             List<Email> emails = getEmailsIgnoreDeleted();
-            ArrayAdapter<Email> adapter = new ArrayAdapter<Email>(UpdateContactActivity.this, R.layout.list_textview_item_with_button, R.id.tvListViewItemWithButton, emails) {
+            emailAdapter = new ArrayAdapter<>(UpdateContactActivity.this, R.layout.list_textview_item_with_button, R.id.tvListViewItemWithButton, emails) {
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
                     View view = super.getView(position, convertView, parent);
@@ -291,7 +272,7 @@ public class UpdateContactActivity extends AppCompatActivity {
                     return view;
                 }
             };
-            lvEmails.setAdapter(adapter);
+            lvEmails.setAdapter(emailAdapter);
             lvEmails.setVisibility(View.VISIBLE);
             ListViewAdapter.setListViewHeightBasedOnChildren(lvEmails);
         } else {

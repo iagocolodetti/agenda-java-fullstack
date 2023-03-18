@@ -1,0 +1,50 @@
+package br.com.iagocolodetti.agenda.service;
+
+import br.com.iagocolodetti.agenda.exception.CustomResponseException;
+import br.com.iagocolodetti.agenda.model.User;
+import br.com.iagocolodetti.agenda.model.Error;
+import jakarta.ws.rs.core.MediaType;
+import java.io.IOException;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+
+/**
+ *
+ * @author iagocolodetti
+ */
+public class SessionService {
+    
+    private final CloseableHttpClient httpclient;
+    
+    public SessionService() {
+        httpclient = HttpClients.createDefault();
+    }
+
+    public String create(User user) throws IOException, CustomResponseException {
+        HttpPost httpPost = new HttpPost(Api.BASE_URL + "/login");
+        httpPost.setHeader("Accept", MediaType.APPLICATION_JSON);
+        httpPost.setHeader("Content-type", MediaType.APPLICATION_JSON);
+        StringEntity stringEntity = new StringEntity(user.toJson());
+        httpPost.setEntity(stringEntity);
+        HttpClientResponseHandler<String> responseHandler = response -> {
+            if (response.getCode() == HttpStatus.SC_OK) {
+                return response.getHeaders("Authorization")[0].getValue();
+            } else {
+                HttpEntity entity = response.getEntity();
+                if (entity == null) {
+                    throw new CustomResponseException("Não foi possível acessar o serviço.", HttpStatus.SC_SERVER_ERROR);
+                } else {
+                    Error error = new Error(EntityUtils.toString(entity));
+                    throw new CustomResponseException(error.getMessage(), error.getStatus());
+                }
+            }
+        };
+        return httpclient.execute(httpPost, responseHandler);
+    }
+}

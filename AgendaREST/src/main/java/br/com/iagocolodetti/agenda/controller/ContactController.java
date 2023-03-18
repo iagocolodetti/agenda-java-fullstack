@@ -6,7 +6,7 @@ import br.com.iagocolodetti.agenda.model.Email;
 import br.com.iagocolodetti.agenda.model.Phone;
 import br.com.iagocolodetti.agenda.model.User;
 import br.com.iagocolodetti.agenda.repository.ContactRepository;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -14,15 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
@@ -82,7 +74,7 @@ public class ContactController {
                                 boolean exists = false;
                                 for (int i = 0; i < result.getPhone().size(); i++) {
                                     Phone p = result.getPhone().get(i);
-                                    if (np.getId() == p.getId()) {
+                                    if (np.getId().equals(p.getId())) {
                                         p.setPhone(np.getPhone());
                                         p.setDeleted(np.isDeleted());
                                         result.getPhone().set(i, p);
@@ -105,7 +97,7 @@ public class ContactController {
                                 boolean exists = false;
                                 for (int i = 0; i < result.getEmail().size(); i++) {
                                     Email e = result.getEmail().get(i);
-                                    if (ne.getId() == e.getId()) {
+                                    if (ne.getId().equals(e.getId())) {
                                         e.setEmail(ne.getEmail());
                                         e.setDeleted(ne.isDeleted());
                                         result.getEmail().set(i, e);

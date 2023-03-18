@@ -9,7 +9,6 @@ import java.util.List;
 import br.com.iagocolodetti.agenda.exception.CustomResponseException;
 import br.com.iagocolodetti.agenda.model.Contact;
 import br.com.iagocolodetti.agenda.model.Error;
-import br.com.iagocolodetti.agenda.model.User;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

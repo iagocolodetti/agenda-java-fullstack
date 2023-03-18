@@ -3,7 +3,6 @@ package br.com.iagocolodetti.agenda.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
