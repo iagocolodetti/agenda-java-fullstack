@@ -19,7 +19,7 @@ Spring Boot RESTful API desenvolvida utilizando: JPA com Hibernate, Lombok, Spri
 
 As configurações de conexão com o banco de dados estão no arquivo: [AgendaREST/src/main/resources/application.properties](/AgendaREST/src/main/resources/application.properties)
 
-*OBS: Utilizar o banco de dados* ***agenda.sql***
+*OBS: O Hibernate criará automaticamente tanto o banco de dados quanto suas tabelas, porém, para visualização ou até mesmo a criação manual desse banco de dados, utilizar o script: **[agenda.sql](agenda.sql)**.*
 
 <br>
 

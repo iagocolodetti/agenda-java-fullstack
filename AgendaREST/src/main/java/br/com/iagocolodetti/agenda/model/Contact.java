@@ -20,17 +20,22 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "contact")
 @Where(clause = "deleted = '0'")
 public class Contact implements Serializable {
 
     private static final long serialVersionUID = 2714721884860822016L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, columnDefinition = "int unsigned")
     private Integer id;
+    @Column(nullable = false, columnDefinition = "varchar(45)")
     private String name;
+    @Column(nullable = false, columnDefinition = "varchar(45)")
     private String alias;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false, columnDefinition = "tinyint(1) default '0'")
     private boolean deleted;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
@@ -46,7 +51,7 @@ public class Contact implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "contact", orphanRemoval = true)
     @JsonIgnoreProperties("contact")
     private List<Email> email;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int unsigned", referencedColumnName = "id")
     @ManyToOne
     @JsonIgnore
     private User user;
@@ -66,8 +71,8 @@ public class Contact implements Serializable {
         setDeleted(false);
         setCreatedAt(new Date());
         setUpdatedAt(new Date());
-        phone.forEach(p -> p.setContact(this));
-        email.forEach(e -> e.setContact(this));
+        phone.forEach((Phone p) -> p.setContact(this));
+        email.forEach((Email e) -> e.setContact(this));
     }
 
     @PreUpdate

@@ -18,6 +18,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "phone")
 @Where(clause = "deleted = '0'")
 public class Phone implements Serializable {
 
@@ -25,9 +26,12 @@ public class Phone implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, columnDefinition = "int unsigned")
     private Integer id;
+    @Column(nullable = false, columnDefinition = "varchar(20)")
     private String phone;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false, columnDefinition = "tinyint(1) default '0'")
     private boolean deleted;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
@@ -37,7 +41,7 @@ public class Phone implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @JsonIgnore
     private Date updatedAt;
-    @JoinColumn(name = "contact_id", referencedColumnName = "id")
+    @JoinColumn(name = "contact_id", nullable = false, columnDefinition = "int unsigned", referencedColumnName = "id")
     @ManyToOne
     private Contact contact;
 

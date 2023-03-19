@@ -17,15 +17,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "user")
 public class User implements Serializable {
 
     private static final long serialVersionUID = -6277535549786010157L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, columnDefinition = "int unsigned")
     private Integer id;
+    @Column(nullable = false, unique = true, columnDefinition = "varchar(45)")
     private String username;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false, columnDefinition = "varchar(60)")
     private String password;
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
