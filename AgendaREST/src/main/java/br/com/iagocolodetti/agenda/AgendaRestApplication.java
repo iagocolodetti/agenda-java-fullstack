@@ -13,8 +13,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(repositoryBaseClass = CustomRepositoryImpl.class)
 public class AgendaRestApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AgendaRestApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(AgendaRestApplication.class, args);
+    }
+    
 }

@@ -6,11 +6,13 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author iagocolodetti
  */
+@Repository
 public interface ContactRepository extends CustomRepository<Contact, Integer> {
     
     @Query("SELECT c FROM Contact c WHERE c.user.id = ?1")
