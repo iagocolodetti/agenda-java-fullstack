@@ -28,7 +28,7 @@ public class Email implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, columnDefinition = "int unsigned")
     private Integer id;
-    @Column(nullable = false, columnDefinition = "varchar(60)")
+    @Column(nullable = false, columnDefinition = "nvarchar(255)")
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false, columnDefinition = "tinyint(1) default '0'")

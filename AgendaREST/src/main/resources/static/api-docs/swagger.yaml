@@ -2,7 +2,7 @@ openapi: '3.0.3'
 info:
   title: agenda-java-fullstack
   description: Agenda de contatos.
-  version: '1.2.0'
+  version: '1.3.0'
   contact:
     name: Iago Colodetti
     url: https://github.com/iagocolodetti
@@ -32,14 +32,21 @@ components:
           format: int
           example: 1
           description: ID do usuário
+          required: false
         username:
           type: string
           example: Nome
           description: Nome de usuário
+          required: true
+          minimum: 3
+          maximum: 45
         password:
           type: string
           example: MinhaSenha123
           description: Senha de acesso
+          required: true
+          minimum: 5
+          maximum: 60
 
     Contact:
       type: object
@@ -49,26 +56,38 @@ components:
           format: int
           example: 1
           description: ID do contato
+          required: false
         name:
           type: string
           example: Nome
           description: Nome do contato
+          required: true
+          minimum: 3
+          maximum: 45
         alias:
           type: string
           example: Apelido
           description: Apelido do contato
+          required: true
+          minimum: 3
+          maximum: 45
         phone:
           type: array
+          required: true
+          minimum: 1
           items:
             $ref: '#/components/schemas/Phone'
         email:
           type: array
+          required: true
+          minimum: 1
           items:
             $ref: '#/components/schemas/Email'
         deleted:
           type: boolean
           example: false
           description: Contato deletado
+          required: false
 
     Phone:
       type: object
@@ -78,14 +97,19 @@ components:
           format: int
           example: 1
           description: ID do telefone
+          required: false (for add) / true (for edit)
         phone:
           type: string
           example: '0000-0000'
           description: Telefone do contato
+          required: true
+          minimum: 7
+          maximum: 20
         deleted:
           type: boolean
-          example: false
+          example: true
           description: Telefone deletado
+          required: false (for add or edit) / true (for delete)
     
     Email:
       type: object
@@ -95,14 +119,18 @@ components:
           format: int
           example: 1
           description: ID do e-mail
+          required: false (for add) / true (for edit)
         email:
           type: string
           example: 'email@gmail.com'
           description: E-mail do contato
+          required: true
+          maximum: 60
         deleted:
           type: boolean
-          example: false
+          example: true
           description: E-mail deletado
+          required: false (for add or edit) / true (for delete)
           
     Error:
       type: object
@@ -224,7 +252,7 @@ components:
       value:
         timestamp: '2020-01-01T12:00:00.000Z'
         status: 400
-        erro: Bad Request
+        error: Bad Request
         message: ... não informado
         path: /exemplo
         method: GET
@@ -234,7 +262,7 @@ components:
       value:
         timestamp: '2020-01-01T12:00:00.000Z'
         status: 401
-        erro: Unauthorized
+        error: Unauthorized
         message: ... não autorizado
         path: /exemplo
         method: GET
@@ -244,7 +272,7 @@ components:
       value:
         timestamp: '2020-01-01T12:00:00.000Z'
         status: 404
-        erro: Not Found
+        error: Not Found
         message: ... não encontrado
         path: /exemplo
         method: GET
@@ -254,7 +282,7 @@ components:
       value:
         timestamp: '2020-01-01T12:00:00.000Z'
         status: 409
-        erro: Conflict
+        error: Conflict
         message: ... já existe
         path: /exemplo
         method: GET
@@ -264,7 +292,7 @@ components:
       value:
         timestamp: '2020-01-01T12:00:00.000Z'
         status: 500
-        erro: Internal Server Erro
+        error: Internal Server Erro
         message: Não foi possível ...
         path: /exemplo
         method: GET

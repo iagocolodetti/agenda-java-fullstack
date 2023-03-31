@@ -1,9 +1,10 @@
 package br.com.iagocolodetti.agenda.controller;
 
+import br.com.iagocolodetti.agenda.dto.ContactDto;
+import br.com.iagocolodetti.agenda.dto.EmailDto;
+import br.com.iagocolodetti.agenda.dto.PhoneDto;
+import br.com.iagocolodetti.agenda.dto.UserDto;
 import br.com.iagocolodetti.agenda.model.Contact;
-import br.com.iagocolodetti.agenda.model.Email;
-import br.com.iagocolodetti.agenda.model.Phone;
-import br.com.iagocolodetti.agenda.model.User;
 import br.com.iagocolodetti.agenda.repository.ContactRepository;
 import br.com.iagocolodetti.agenda.repository.EmailRepository;
 import br.com.iagocolodetti.agenda.repository.PhoneRepository;
@@ -11,17 +12,20 @@ import br.com.iagocolodetti.agenda.repository.UserRepository;
 import com.google.gson.Gson;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
+import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -44,11 +48,16 @@ public class IntegrationTest {
     private PhoneRepository phoneRepository;
     @Autowired
     private EmailRepository emailRepository;
+    
+    @Autowired
+    private ModelMapper modelMapper;
 
+    @Autowired
     private Gson gson;
 
-    private User user;
-    private Contact contact;
+    private UserDto user;
+    private ContactDto contact;
+    private Integer contactId;
 
     @BeforeAll
     public void setup() {
@@ -61,32 +70,32 @@ public class IntegrationTest {
         RestAssured.baseURI = "http://localhost";
         RestAssured.basePath = "agenda/ws";
 
-        gson = new Gson();
-
-        user = new User();
+        user = new UserDto();
         user.setUsername("user");
         user.setPassword("12345");
-
-        contact = new Contact();
-        contact.setName("Name LastName");
-        contact.setAlias("Nickname");
-        Phone p1 = new Phone();
+        
+        PhoneDto p1 = new PhoneDto();
         p1.setPhone("1111-2222");
-        Phone p2 = new Phone();
+        PhoneDto p2 = new PhoneDto();
         p2.setPhone("3333-4444");
-        List<Phone> phones = new ArrayList<>();
+        List<PhoneDto> phones = new ArrayList<>();
         phones.add(p1);
         phones.add(p2);
-        Email e1 = new Email();
+        
+        EmailDto e1 = new EmailDto();
         e1.setEmail("email1@gmail.com");
-        Email e2 = new Email();
+        EmailDto e2 = new EmailDto();
         e2.setEmail("email2@hotmail.com");
-        Email e3 = new Email();
+        EmailDto e3 = new EmailDto();
         e3.setEmail("email3@live.com");
-        List<Email> emails = new ArrayList<>();
+        List<EmailDto> emails = new ArrayList<>();
         emails.add(e1);
         emails.add(e2);
         emails.add(e3);
+
+        contact = new ContactDto();
+        contact.setName("Name LastName");
+        contact.setAlias("Nickname");
         contact.setPhone(phones);
         contact.setEmail(emails);
     }
@@ -115,14 +124,16 @@ public class IntegrationTest {
     @Test
     @Order(3)
     public void createContact() {
-        String contactJson = given().body(gson.toJson(contact))
+        Contact _contact = given().body(gson.toJson(contact))
                 .accept(ContentType.JSON)
                 .contentType(ContentType.JSON)
                 .header("authorization", authorization)
                 .when().post("/contacts")
                 .then().statusCode(HttpStatus.SC_CREATED)
-                .extract().body().asString();
-        contact = gson.fromJson(contactJson, Contact.class);
+                .extract().body().as(Contact.class);
+        
+        contactId = _contact.getId();
+        contact = modelMapper.map(_contact, ContactDto.class);
     }
 
     @Test
@@ -143,15 +154,29 @@ public class IntegrationTest {
         contact.setAlias("NewNickname");
         contact.getEmail().get(0).setDeleted(true);
         contact.getEmail().get(1).setEmail("email2@yahoo.com");
-        Email email = new Email();
+        EmailDto email = new EmailDto();
         email.setEmail("email4@xyz.com");
         contact.getEmail().add(email);
         given().body(gson.toJson(contact))
                 .accept(ContentType.JSON)
                 .contentType(ContentType.JSON)
                 .header("authorization", authorization)
-                .when().put("/contacts/" + contact.getId())
+                .when().put("/contacts/" + contactId)
                 .then().statusCode(HttpStatus.SC_NO_CONTENT);
+        
+        List<Contact> contacts = given().accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .header("authorization", authorization)
+                .when().get("/contacts").as(new TypeRef<>(){});
+        
+        Contact _contact = contacts.stream().filter(c -> c.getId().equals(contactId)).findAny().orElse(null);
+        
+        Assertions.assertEquals(contact.getName(), _contact.getName());
+        Assertions.assertEquals(contact.getAlias(), _contact.getAlias());
+        Assertions.assertEquals(contact.getPhone().size(), _contact.getPhone().size());
+        Assertions.assertEquals(contact.getEmail().size() - 1, _contact.getEmail().size());
+        Assertions.assertEquals(contact.getEmail().get(1).getEmail(), _contact.getEmail().get(0).getEmail());
+        Assertions.assertEquals(contact.getEmail().get(2).getEmail(), _contact.getEmail().get(1).getEmail());
     }
 
     @Test
@@ -160,7 +185,7 @@ public class IntegrationTest {
         given().accept(ContentType.JSON)
                 .contentType(ContentType.JSON)
                 .header("authorization", authorization)
-                .when().delete("/contacts/" + contact.getId())
+                .when().delete("/contacts/" + contactId)
                 .then().statusCode(HttpStatus.SC_NO_CONTENT);
     }
 }

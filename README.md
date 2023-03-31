@@ -15,7 +15,7 @@ Um exemplo simples de aplicação fullstack utilizando a linguagem Java.
 - Java 17 (JDK 17.0.6)
 - Spring Boot 3.0.4
 
-Spring Boot RESTful API desenvolvida utilizando: JPA com Hibernate, Lombok, Spring Security com JWT, documentação com Swagger (OpenAPI 3.0.3) e banco de dados MySQL.
+Spring Boot RESTful API desenvolvida utilizando: JPA com Hibernate, Lombok, Validation, Spring Security com JWT, documentação com Swagger (OpenAPI 3.0.3) e banco de dados MySQL.
 
 As configurações de conexão com o banco de dados estão no arquivo: [AgendaREST/src/main/resources/application.properties](/AgendaREST/src/main/resources/application.properties)
 

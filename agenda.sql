@@ -59,7 +59,7 @@ CREATE TABLE `email` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(6) DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
-  `email` varchar(60) NOT NULL,
+  `email` nvarchar(255) NOT NULL,
   `updated_at` datetime(6) DEFAULT NULL,
   `contact_id` int unsigned NOT NULL,
   PRIMARY KEY (`id`),

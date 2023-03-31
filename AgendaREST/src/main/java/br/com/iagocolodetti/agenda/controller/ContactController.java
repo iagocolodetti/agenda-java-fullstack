@@ -1,9 +1,12 @@
 package br.com.iagocolodetti.agenda.controller;
 
+import br.com.iagocolodetti.agenda.dto.ContactDto;
 import br.com.iagocolodetti.agenda.error.CustomJsonError;
 import br.com.iagocolodetti.agenda.model.Contact;
 import br.com.iagocolodetti.agenda.service.ContactService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +26,14 @@ public class ContactController {
 
     @Autowired
     private ContactService contactService;
+    
+    @Autowired
+    private ModelMapper modelMapper;
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> create(HttpServletRequest request, @RequestBody Contact contact) {
+    public ResponseEntity<?> create(HttpServletRequest request, @RequestBody @Valid ContactDto contactDto) {
         try {
+            Contact contact = modelMapper.map(contactDto, Contact.class);
             return new ResponseEntity<>(contactService.create(Integer.parseInt((String) request.getAttribute("userid")), contact), HttpStatus.CREATED);
         } catch (ResponseStatusException ex) {
             return ResponseEntity
@@ -55,8 +62,9 @@ public class ContactController {
     }
 
     @PutMapping(path = {"/{id}"}, consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> update(HttpServletRequest request, @PathVariable Integer id, @RequestBody Contact contact) {
+    public ResponseEntity<?> update(HttpServletRequest request, @PathVariable Integer id, @RequestBody @Valid ContactDto contactDto) {
         try {
+            Contact contact = modelMapper.map(contactDto, Contact.class);
             contactService.update(Integer.parseInt((String) request.getAttribute("userid")), id, contact);
             return ResponseEntity.noContent().build();
         } catch (ResponseStatusException ex) {

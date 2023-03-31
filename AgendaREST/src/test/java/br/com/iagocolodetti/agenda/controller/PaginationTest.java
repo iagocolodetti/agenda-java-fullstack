@@ -1,9 +1,9 @@
 package br.com.iagocolodetti.agenda.controller;
 
-import br.com.iagocolodetti.agenda.model.Contact;
-import br.com.iagocolodetti.agenda.model.Email;
-import br.com.iagocolodetti.agenda.model.Phone;
-import br.com.iagocolodetti.agenda.model.User;
+import br.com.iagocolodetti.agenda.dto.ContactDto;
+import br.com.iagocolodetti.agenda.dto.EmailDto;
+import br.com.iagocolodetti.agenda.dto.PhoneDto;
+import br.com.iagocolodetti.agenda.dto.UserDto;
 import br.com.iagocolodetti.agenda.repository.ContactRepository;
 import br.com.iagocolodetti.agenda.repository.EmailRepository;
 import br.com.iagocolodetti.agenda.repository.PhoneRepository;
@@ -58,7 +58,7 @@ public class PaginationTest {
 
         Gson gson = new Gson();
 
-        User user = new User();
+        UserDto user = new UserDto();
         user.setUsername("user");
         user.setPassword("12345");
 
@@ -73,26 +73,27 @@ public class PaginationTest {
                 .when().post("/login")
                 .then().extract().header("authorization");
 
-        Phone p1 = new Phone();
+        PhoneDto p1 = new PhoneDto();
         p1.setPhone("1111-2222");
-        Phone p2 = new Phone();
+        PhoneDto p2 = new PhoneDto();
         p2.setPhone("3333-4444");
-        List<Phone> phones = new ArrayList<>();
+        List<PhoneDto> phones = new ArrayList<>();
         phones.add(p1);
         phones.add(p2);
-        Email e1 = new Email();
+        
+        EmailDto e1 = new EmailDto();
         e1.setEmail("email1@gmail.com");
-        Email e2 = new Email();
+        EmailDto e2 = new EmailDto();
         e2.setEmail("email2@hotmail.com");
-        Email e3 = new Email();
+        EmailDto e3 = new EmailDto();
         e3.setEmail("email3@live.com");
-        List<Email> emails = new ArrayList<>();
+        List<EmailDto> emails = new ArrayList<>();
         emails.add(e1);
         emails.add(e2);
         emails.add(e3);
 
         for (int i = 0; i < 10; i++) {
-            Contact contact = new Contact();
+            ContactDto contact = new ContactDto();
             contact.setName("Name LastName " + i);
             contact.setAlias("Nickname " + i);
             contact.setPhone(phones);
@@ -127,8 +128,7 @@ public class PaginationTest {
                 .when().get("/contacts")
                 .then().statusCode(HttpStatus.SC_OK)
                 .and()
-                .assertThat().body("", Matchers.hasSize(5))
-                .extract().body().asString();
+                .assertThat().body("", Matchers.hasSize(5));
     }
     
     @Test

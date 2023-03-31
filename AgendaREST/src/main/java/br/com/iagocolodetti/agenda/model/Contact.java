@@ -74,7 +74,7 @@ public class Contact implements Serializable {
         phone.forEach((Phone p) -> p.setContact(this));
         email.forEach((Email e) -> e.setContact(this));
     }
-
+    
     @PreUpdate
     private void preUpdate() {
         setUpdatedAt(new Date());

@@ -1,9 +1,12 @@
 package br.com.iagocolodetti.agenda.controller;
 
+import br.com.iagocolodetti.agenda.dto.UserDto;
 import br.com.iagocolodetti.agenda.error.CustomJsonError;
 import br.com.iagocolodetti.agenda.model.User;
 import br.com.iagocolodetti.agenda.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -24,10 +27,14 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
+    
+    @Autowired
+    private ModelMapper modelMapper;
+    
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<?> create(HttpServletRequest request, @RequestBody User user) {
+    public ResponseEntity<?> create(HttpServletRequest request, @RequestBody @Valid UserDto userDto) {
         try {
+            User user = modelMapper.map(userDto, User.class);
             return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
         } catch (DataIntegrityViolationException ex) {
             return ResponseEntity
