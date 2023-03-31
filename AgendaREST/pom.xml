@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.com.iagocolodetti</groupId>
     <artifactId>AgendaREST</artifactId>
-    <version>1.3</version>
+    <version>1.3.1</version>
     <name>AgendaREST</name>
     <description>Exemplo de WebService REST com Spring Boot</description>
     

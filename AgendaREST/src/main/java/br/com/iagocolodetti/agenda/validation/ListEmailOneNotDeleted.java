@@ -16,10 +16,10 @@ import java.lang.annotation.Target;
 @Target({ FIELD, PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = NotEmptyListValidator.class)
-public @interface NotEmptyList {
+@Constraint(validatedBy = ListEmailOneNotDeletedValidator.class)
+public @interface ListEmailOneNotDeleted {
     
-    public String message() default "The list must not be empty";
+    public String message() default "The list must have one email not deleted";
     public Class<?>[] groups() default {};
     public Class<? extends Payload>[] payload() default {};
 }

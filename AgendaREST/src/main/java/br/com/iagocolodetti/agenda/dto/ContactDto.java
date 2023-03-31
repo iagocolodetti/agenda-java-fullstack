@@ -1,5 +1,7 @@
 package br.com.iagocolodetti.agenda.dto;
 
+import br.com.iagocolodetti.agenda.validation.ListEmailOneNotDeleted;
+import br.com.iagocolodetti.agenda.validation.ListPhoneOneNotDeleted;
 import br.com.iagocolodetti.agenda.validation.NotEmptyList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -33,10 +35,12 @@ public class ContactDto implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean deleted;
     @NotEmptyList(message = "Adicione ao menos um telefone")
+    @ListPhoneOneNotDeleted(message = "Adicione ao menos um telefone")
     @Valid
     @JsonIgnoreProperties("contact")
     private List<PhoneDto> phone;
     @NotEmptyList(message = "Adicione ao menos um e-mail")
+    @ListEmailOneNotDeleted(message = "Adicione ao menos um e-mail")
     @Valid
     @JsonIgnoreProperties("contact")
     private List<EmailDto> email;

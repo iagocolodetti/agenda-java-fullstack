@@ -4,6 +4,7 @@ import br.com.iagocolodetti.agenda.dto.ContactDto;
 import br.com.iagocolodetti.agenda.dto.EmailDto;
 import br.com.iagocolodetti.agenda.dto.PhoneDto;
 import br.com.iagocolodetti.agenda.dto.UserDto;
+import br.com.iagocolodetti.agenda.model.Contact;
 import br.com.iagocolodetti.agenda.repository.ContactRepository;
 import br.com.iagocolodetti.agenda.repository.EmailRepository;
 import br.com.iagocolodetti.agenda.repository.PhoneRepository;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -43,6 +45,9 @@ public class ValidationTest {
     private PhoneRepository phoneRepository;
     @Autowired
     private EmailRepository emailRepository;
+    
+    @Autowired
+    private ModelMapper modelMapper;
     
     @Autowired
     private Gson gson;
@@ -301,6 +306,48 @@ public class ValidationTest {
                 .contentType(ContentType.JSON)
                 .header("authorization", authorization)
                 .when().post("/contacts")
+                .then().statusCode(HttpStatus.SC_BAD_REQUEST);
+    }
+    
+    @Test
+    @Order(14)
+    public void updateContactShouldFailAllPhonesDeleted() {
+        ContactDto _contact = copyObject(contact, ContactDto.class);
+        Contact __contact = given().body(gson.toJson(_contact))
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .header("authorization", authorization)
+                .when().post("/contacts").as(Contact.class);
+        _contact = modelMapper.map(__contact, ContactDto.class);
+        for (PhoneDto phone : _contact.getPhone()) {
+            phone.setDeleted(true);
+        }
+        given().body(gson.toJson(_contact))
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .header("authorization", authorization)
+                .when().put("/contacts/" + __contact.getId())
+                .then().statusCode(HttpStatus.SC_BAD_REQUEST);
+    }
+    
+    @Test
+    @Order(15)
+    public void updateContactShouldFailAllEmailsDeleted() {
+        ContactDto _contact = copyObject(contact, ContactDto.class);
+        Contact __contact = given().body(gson.toJson(_contact))
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .header("authorization", authorization)
+                .when().post("/contacts").as(Contact.class);
+        _contact = modelMapper.map(__contact, ContactDto.class);
+        for (EmailDto email : _contact.getEmail()) {
+            email.setDeleted(true);
+        }
+        given().body(gson.toJson(_contact))
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .header("authorization", authorization)
+                .when().put("/contacts/" + __contact.getId())
                 .then().statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 }
