@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import br.com.iagocolodetti.agenda.exception.CustomResponseException;
 import br.com.iagocolodetti.agenda.model.Contact;
@@ -138,21 +140,32 @@ public class UpdateContactActivity extends AppCompatActivity {
             setEmails();
 
             tilPhone.setEndIconOnClickListener(view -> {
-                Phone p = new Phone();
-                p.setId(--lastPhoneID);
-                p.setPhone(tietPhone.getText().toString());
-                contact.getPhone().add(p);
-                tietPhone.setText("");
-                setPhones();
+                String _phone = tietPhone.getText().toString();
+                if (_phone.length() >= getResources().getInteger(R.integer.phone_min_length) && _phone.length() <= getResources().getInteger(R.integer.phone_max_length)) {
+                    Phone p = new Phone();
+                    p.setId(--lastPhoneID);
+                    p.setPhone(_phone);
+                    contact.getPhone().add(p);
+                    tietPhone.setText("");
+                    setPhones();
+                } else {
+                    Toast.makeText(this, getResources().getString(R.string.invalid_phone), Toast.LENGTH_SHORT).show();
+                }
             });
 
             tilEmail.setEndIconOnClickListener(view -> {
-                Email e = new Email();
-                e.setId(--lastEmailID);
-                e.setEmail(tietEmail.getText().toString());
-                contact.getEmail().add(e);
-                tietEmail.setText("");
-                setEmails();
+                String _email = tietEmail.getText().toString();
+                String[] _emailArray = _email.split("@");
+                if (Pattern.matches(getResources().getString(R.string.email_pattern), _email) && _emailArray[0].length() <= getResources().getInteger(R.integer.email_name_max_length) && _emailArray[1].length() <= getResources().getInteger(R.integer.email_address_max_length)) {
+                    Email e = new Email();
+                    e.setId(--lastEmailID);
+                    e.setEmail(_email);
+                    contact.getEmail().add(e);
+                    tietEmail.setText("");
+                    setEmails();
+                } else {
+                    Toast.makeText(this, getResources().getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
+                }
             });
 
             btUpdate.setOnClickListener(view -> {
@@ -160,8 +173,12 @@ public class UpdateContactActivity extends AppCompatActivity {
                 contact.setAlias(tietAlias.getText().toString());
                 if (contact.getName().isEmpty()) {
                     cam.setMessage(tvMessage, getResources().getString(R.string.name_empty), "danger");
+                } else if (contact.getName().length() < getResources().getInteger(R.integer.name_min_length) || contact.getName().length() > getResources().getInteger(R.integer.name_max_length)) {
+                    cam.setMessage(tvMessage, getResources().getString(R.string.name_min_max_length, getResources().getInteger(R.integer.name_min_length), getResources().getInteger(R.integer.name_max_length)), "danger");
                 } else if (contact.getAlias().isEmpty()) {
                     cam.setMessage(tvMessage, getResources().getString(R.string.alias_empty), "danger");
+                } else if (contact.getAlias().length() < getResources().getInteger(R.integer.alias_min_length) || contact.getAlias().length() > getResources().getInteger(R.integer.alias_max_length)) {
+                    cam.setMessage(tvMessage, getResources().getString(R.string.alias_min_max_length, getResources().getInteger(R.integer.alias_min_length), getResources().getInteger(R.integer.alias_max_length)), "danger");
                 } else if (contact.getPhone().isEmpty() || !contact.getPhone().stream().anyMatch(p -> !p.isDeleted())) {
                     cam.setMessage(tvMessage, getResources().getString(R.string.phones_empty), "danger");
                 } else if (contact.getEmail().isEmpty() || !contact.getEmail().stream().anyMatch(e -> !e.isDeleted())) {
@@ -184,7 +201,7 @@ public class UpdateContactActivity extends AppCompatActivity {
                             cs.update(au.getAuth(), contact);
                             Intent intent = new Intent(UpdateContactActivity.this, ContactsActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            intent.putExtra("contactUpdated", getResources().getString(R.string.contact_updated_start) + contact.getName() + getResources().getString(R.string.contact_updated_end));
+                            intent.putExtra("contactUpdated", getResources().getString(R.string.contact_updated, contact.getName()));
                             startActivity(intent);
                             finish();
                         } catch (CustomResponseException ex) {
@@ -219,7 +236,6 @@ public class UpdateContactActivity extends AppCompatActivity {
             } else {
                 contact.getPhone().get(index).setDeleted(true);
             }
-            phoneAdapter.notifyDataSetChanged();
             setPhones();
         } else if (tag.equals("lvEmails")) {
             int index = getIndexOfEmailID(getEmailsIgnoreDeleted().get(position).getId());
@@ -228,12 +244,14 @@ public class UpdateContactActivity extends AppCompatActivity {
             } else {
                 contact.getEmail().get(index).setDeleted(true);
             }
-            emailAdapter.notifyDataSetChanged();
             setEmails();
         }
     }
 
     private void setPhones() {
+        if (phoneAdapter != null) {
+            phoneAdapter.notifyDataSetChanged();
+        }
         TextView tvPhones = findViewById(R.id.update_contact_tvPhones);
         ListView lvPhones = findViewById(R.id.update_contact_lvPhones);
         if (!contact.getPhone().isEmpty()) {
@@ -258,6 +276,9 @@ public class UpdateContactActivity extends AppCompatActivity {
     }
 
     private void setEmails() {
+        if (emailAdapter != null) {
+            emailAdapter.notifyDataSetChanged();
+        }
         TextView tvEmails = findViewById(R.id.update_contact_tvEmails);
         ListView lvEmails = findViewById(R.id.update_contact_lvEmails);
         if (!contact.getEmail().isEmpty()) {

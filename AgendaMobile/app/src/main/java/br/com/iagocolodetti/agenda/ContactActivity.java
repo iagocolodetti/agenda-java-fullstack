@@ -102,7 +102,7 @@ public class ContactActivity extends AppCompatActivity {
                                     new ContactService().destroy(au.getAuth(), contact.getId());
                                     Intent intent = new Intent(ContactActivity.this, ContactsActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    intent.putExtra("contactDeleted", getResources().getString(R.string.contact_deleted_start) + contact.getName() + getResources().getString(R.string.contact_deleted_end));
+                                    intent.putExtra("contactDeleted", getResources().getString(R.string.contact_deleted, contact.getName()));
                                     startActivity(intent);
                                     finish();
                                 } catch (CustomResponseException ex) {

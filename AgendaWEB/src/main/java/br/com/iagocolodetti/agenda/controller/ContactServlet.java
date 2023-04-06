@@ -20,6 +20,15 @@ import org.apache.hc.core5.http.HttpStatus;
  * @author iagocolodetti
  */
 public class ContactServlet extends HttpServlet {
+    
+    private void sendError(HttpServletResponse response, String error, int status) throws IOException {
+        response.setStatus(status);
+        response.setContentType(MediaType.APPLICATION_JSON);
+        try (PrintWriter out = response.getWriter()) {
+            out.println("{\"error\":\"" + error + "\",\"status\":\"" + status + "\"}");
+            out.close();
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -69,12 +78,7 @@ public class ContactServlet extends HttpServlet {
                 if (ex.getStatus() == HttpStatus.SC_UNAUTHORIZED) {
                     AuthUtils.forceLogout(request, response, "Erro: " + ex.getMessage() + ".", ex.getStatus());
                 } else {
-                    response.setStatus(ex.getStatus());
-                    response.setContentType(MediaType.APPLICATION_JSON);
-                    try (PrintWriter out = response.getWriter()) {
-                        out.println("{\"error\":\"" + ex.getMessage() + "\",\"status\":\"" + ex.getStatus() + "\"}");
-                        out.close();
-                    }
+                    sendError(response, ex.getMessage(), ex.getStatus());
                 }
             }
         } else {
@@ -84,12 +88,7 @@ public class ContactServlet extends HttpServlet {
                 if (ex.getStatus() == HttpStatus.SC_UNAUTHORIZED) {
                     AuthUtils.forceLogout(request, response, "Erro: " + ex.getMessage() + ".", ex.getStatus());
                 } else {
-                    response.setStatus(ex.getStatus());
-                    response.setContentType(MediaType.APPLICATION_JSON);
-                    try (PrintWriter out = response.getWriter()) {
-                        out.println("{\"error\":\"" + ex.getMessage() + "\",\"status\":\"" + ex.getStatus() + "\"}");
-                        out.close();
-                    }
+                    sendError(response, ex.getMessage(), ex.getStatus());
                 }
             }
         }

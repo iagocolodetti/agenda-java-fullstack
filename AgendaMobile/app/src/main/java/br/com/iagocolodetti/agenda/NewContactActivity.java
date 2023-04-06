@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import br.com.iagocolodetti.agenda.exception.CustomResponseException;
 import br.com.iagocolodetti.agenda.model.Contact;
@@ -90,19 +92,30 @@ public class NewContactActivity extends AppCompatActivity {
         tvLogout.setOnClickListener(view -> logout(null));
 
         tilPhone.setEndIconOnClickListener(view -> {
-            Phone p = new Phone();
-            p.setPhone(tietPhone.getText().toString());
-            phone.add(p);
-            tietPhone.setText("");
-            setPhones();
+            String _phone = tietPhone.getText().toString();
+            if (_phone.length() >= getResources().getInteger(R.integer.phone_min_length) && _phone.length() <= getResources().getInteger(R.integer.phone_max_length)) {
+                Phone p = new Phone();
+                p.setPhone(_phone);
+                phone.add(p);
+                tietPhone.setText("");
+                setPhones();
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.invalid_phone), Toast.LENGTH_SHORT).show();
+            }
         });
 
         tilEmail.setEndIconOnClickListener(view -> {
-            Email e = new Email();
-            e.setEmail(tietEmail.getText().toString());
-            email.add(e);
-            tietEmail.setText("");
-            setEmails();
+            String _email = tietEmail.getText().toString();
+            String[] _emailArray = _email.split("@");
+            if (Pattern.matches(getResources().getString(R.string.email_pattern), _email) && _emailArray[0].length() <= getResources().getInteger(R.integer.email_name_max_length) && _emailArray[1].length() <= getResources().getInteger(R.integer.email_address_max_length)) {
+                Email e = new Email();
+                e.setEmail(_email);
+                email.add(e);
+                tietEmail.setText("");
+                setEmails();
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
+            }
         });
 
         btSave.setOnClickListener(view -> {
@@ -110,8 +123,12 @@ public class NewContactActivity extends AppCompatActivity {
             String alias = tietAlias.getText().toString();
             if (name.isEmpty()) {
                 cam.setMessage(tvMessage, getResources().getString(R.string.name_empty), "danger");
+            } else if (name.length() < getResources().getInteger(R.integer.name_min_length) || name.length() > getResources().getInteger(R.integer.name_max_length)) {
+                cam.setMessage(tvMessage, getResources().getString(R.string.name_min_max_length, getResources().getInteger(R.integer.name_min_length), getResources().getInteger(R.integer.name_max_length)), "danger");
             } else if (alias.isEmpty()) {
                 cam.setMessage(tvMessage, getResources().getString(R.string.alias_empty), "danger");
+            } else if (alias.length() < getResources().getInteger(R.integer.alias_min_length) || alias.length() > getResources().getInteger(R.integer.alias_max_length)) {
+                cam.setMessage(tvMessage, getResources().getString(R.string.alias_min_max_length, getResources().getInteger(R.integer.alias_min_length), getResources().getInteger(R.integer.alias_max_length)), "danger");
             } else if (phone.isEmpty()) {
                 cam.setMessage(tvMessage, getResources().getString(R.string.phones_empty), "danger");
             } else if (email.isEmpty()) {
@@ -122,7 +139,7 @@ public class NewContactActivity extends AppCompatActivity {
                 Thread thread = new Thread(() -> {
                     try {
                         cs.create(au.getAuth(), new Contact(name, alias, phone, email));
-                        setMessageInsideThread(getResources().getString(R.string.contact_saved_start) + name + getResources().getString(R.string.contact_saved_end), "success");
+                        setMessageInsideThread(getResources().getString(R.string.contact_saved, name), "success");
                         runOnUiThread(() -> {
                             tietName.setText("");
                             tietAlias.setText("");
@@ -162,16 +179,17 @@ public class NewContactActivity extends AppCompatActivity {
         final String tag = listView.getTag().toString();
         if (tag.equals("lvPhones")) {
             phone.remove(position);
-            phoneAdapter.notifyDataSetChanged();
             setPhones();
         } else if (tag.equals("lvEmails")) {
             email.remove(position);
-            emailAdapter.notifyDataSetChanged();
             setEmails();
         }
     }
 
     private void setPhones() {
+        if (phoneAdapter != null) {
+            phoneAdapter.notifyDataSetChanged();
+        }
         TextView tvPhones = findViewById(R.id.new_contact_tvPhones);
         ListView lvPhones = findViewById(R.id.new_contact_lvPhones);
         if (!phone.isEmpty()) {
@@ -195,6 +213,9 @@ public class NewContactActivity extends AppCompatActivity {
     }
 
     private void setEmails() {
+        if (emailAdapter != null) {
+            emailAdapter.notifyDataSetChanged();
+        }
         TextView tvEmails = findViewById(R.id.new_contact_tvEmails);
         ListView lvEmails = findViewById(R.id.new_contact_lvEmails);
         if (!email.isEmpty()) {

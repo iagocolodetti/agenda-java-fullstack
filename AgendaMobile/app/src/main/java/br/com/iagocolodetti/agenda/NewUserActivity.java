@@ -58,8 +58,12 @@ public class NewUserActivity extends AppCompatActivity {
             String confirmPassword = tietConfirmPassword.getText().toString();
             if (username.isEmpty()) {
                 cam.setMessage(tvMessage, getResources().getString(R.string.username_empty), "danger");
+            } else if (username.length() < getResources().getInteger(R.integer.username_min_length) || username.length() > getResources().getInteger(R.integer.username_max_length)) {
+                cam.setMessage(tvMessage, getResources().getString(R.string.username_min_max_length, getResources().getInteger(R.integer.username_min_length), getResources().getInteger(R.integer.username_max_length)), "danger");
             } else if (password.isEmpty()) {
                 cam.setMessage(tvMessage, getResources().getString(R.string.password_empty), "danger");
+            } else if (password.length() < getResources().getInteger(R.integer.password_min_length) || password.length() > getResources().getInteger(R.integer.password_max_length)) {
+                cam.setMessage(tvMessage, getResources().getString(R.string.password_min_max_length, getResources().getInteger(R.integer.password_min_length), getResources().getInteger(R.integer.password_max_length)), "danger");
             } else if (confirmPassword.isEmpty()) {
                 cam.setMessage(tvMessage, getResources().getString(R.string.confirm_password_empty), "danger");
             } else if (!password.equals(confirmPassword)) {

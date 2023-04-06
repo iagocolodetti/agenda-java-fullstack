@@ -10,8 +10,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.apache.hc.client5.http.HttpHostConnectException;
+import org.apache.hc.core5.http.HttpStatus;
 
 public class LoginServlet extends HttpServlet {
+    
+    private void sendError(HttpServletRequest request, HttpServletResponse response, String error, Integer status)
+            throws ServletException, IOException {
+        request.setAttribute("message", "Erro: " + error);
+        request.setAttribute("alert", "alert-danger");
+        if (status != null) {
+            response.setStatus(status);
+        }
+        request.getRequestDispatcher("pages/login.jsp").forward(request, response);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -32,13 +43,9 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         request.setAttribute("username", username);
         if (username.isEmpty()) {
-            request.setAttribute("message", "Erro: Preencha o campo destinado ao nome.");
-            request.setAttribute("alert", "alert-danger");
-            request.getRequestDispatcher("pages/login.jsp").forward(request, response);
+            sendError(request, response, "Preencha o campo destinado ao nome.", HttpStatus.SC_BAD_REQUEST);
         } else if (password.isEmpty()) {
-            request.setAttribute("message", "Erro: Preencha o campo destinado à senha.");
-            request.setAttribute("alert", "alert-danger");
-            request.getRequestDispatcher("pages/login.jsp").forward(request, response);
+            sendError(request, response, "Preencha o campo destinado à senha.", HttpStatus.SC_BAD_REQUEST);
         } else {
             SessionService ss = new SessionService();
             try {
@@ -46,15 +53,9 @@ public class LoginServlet extends HttpServlet {
                 AuthUtils.setAuth(request, auth);
                 response.sendRedirect("contacts");
             } catch (CustomResponseException ex) {
-                request.setAttribute("message", "Erro: " + ex.getMessage());
-                request.setAttribute("alert", "alert-danger");
-                response.setStatus(ex.getStatus());
-                request.getRequestDispatcher("pages/login.jsp").forward(request, response);
+                sendError(request, response, ex.getMessage(), ex.getStatus());
             } catch (HttpHostConnectException ex) {
-                request.setAttribute("message", "Erro: Não foi possível realizar o login.");
-                request.setAttribute("alert", "alert-danger");
-                response.setStatus(500);
-                request.getRequestDispatcher("pages/login.jsp").forward(request, response);
+                sendError(request, response, "Não foi possível realizar o login.", HttpStatus.SC_INTERNAL_SERVER_ERROR);
             }
         }
     }

@@ -3,6 +3,36 @@ const app = angular.module('app', []);
 app.controller('controller', ($scope, $http, $location, $window) => {
 
     const baseUrl = $location.absUrl().replace('contacts', '');
+    
+    const NameValidation = {
+        minLength: 3,
+        maxLength: 45
+    };
+    
+    const AliasValidation = {
+        minLength: 3,
+        maxLength: 45
+    };
+    
+    const phoneValidation = {
+        minLength: 7,
+        maxLength: 20
+    };
+    
+    const emailValidation = {
+        pattern: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+        nameMaxLength: 64,
+        addressMaxLength: 190
+    };
+    
+    function isValidPhone(text) {
+        return text.length >= phoneValidation.minLength && text.length <= phoneValidation.maxLength;
+    }
+    
+    function isValidEmail(text) {
+        const _email = text.split('@');
+        return emailValidation.pattern.test(text) && _email[0].length <= emailValidation.nameMaxLength && _email[1].length <= emailValidation.addressMaxLength;
+    }
 
     $scope.contact = {
         id: null,
@@ -31,7 +61,7 @@ app.controller('controller', ($scope, $http, $location, $window) => {
     };
 
     $scope.addPhone = () => {
-        if ($scope.phone.length > 0) {
+        if (isValidPhone($scope.phone)) {
             const {phone} = $scope.contact;
             $scope.contact.phone.push({
                 id: --lastPhoneID,
@@ -52,7 +82,7 @@ app.controller('controller', ($scope, $http, $location, $window) => {
     };
 
     $scope.addEmail = () => {
-        if ($scope.email.length > 0) {
+        if (isValidEmail($scope.email)) {
             const {email} = $scope.contact;
             $scope.contact.email.push({
                 id: --lastEmailID,
@@ -87,12 +117,20 @@ app.controller('controller', ($scope, $http, $location, $window) => {
     $scope.post = async () => {
         if ($scope.contact.name.length === 0) {
             $scope.error = 'Erro: Preencha o campo destinado ao nome.';
+        } else if ($scope.contact.name.length < NameValidation.minLength || $scope.contact.name.length > NameValidation.maxLength) {
+            $scope.error = `Erro: O nome deve possuir de ${NameValidation.minLength} à ${NameValidation.maxLength} caracteres.`;
         } else if ($scope.contact.alias.length === 0) {
             $scope.error = 'Erro: Preencha o campo destinado ao apelido.';
+        } else if ($scope.contact.alias.length < AliasValidation.minLength || $scope.contact.alias.length > AliasValidation.maxLength) {
+            $scope.error = `Erro: O apelido deve possuir de ${AliasValidation.minLength} à ${AliasValidation.maxLength} caracteres.`;
         } else if ($scope.contact.phone.length === 0 || !$scope.contact.phone.some(p => !p.deleted)) {
             $scope.error = 'Erro: Você deve adicionar ao menos um telefone.';
+        } else if (!$scope.contact.phone.some(p => isValidPhone(p.phone))) {
+            $scope.error = `Erro: Existe(m) telefone(s) inválido(s) na lista, o telefone deve possuir de ${phoneValidation.minLength} à ${phoneValidation.maxLength} dígitos.`;
         } else if ($scope.contact.email.length === 0 || !$scope.contact.email.some(e => !e.deleted)) {
             $scope.error = 'Erro: Você deve adicionar ao menos um e-mail.';
+        } else if (!$scope.contact.email.some(e => isValidEmail(e.email))) {
+            $scope.error = 'Erro: Existe(m) endereço(s) de e-mail inválido(s) na lista.';
         } else {
             try {
                 $scope.disabled = true;

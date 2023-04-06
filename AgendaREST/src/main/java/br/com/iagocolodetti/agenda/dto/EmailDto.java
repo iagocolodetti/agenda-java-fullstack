@@ -3,7 +3,6 @@ package br.com.iagocolodetti.agenda.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;

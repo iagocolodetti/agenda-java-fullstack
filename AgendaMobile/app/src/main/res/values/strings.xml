@@ -21,12 +21,9 @@
     <string name="save">Salvar</string>
     <string name="update">Atualizar</string>
     <string name="logout"><u>Logout</u></string>
-    <string name="contact_saved_start">Contato \'</string>
-    <string name="contact_saved_end">\' salvo com sucesso.</string>
-    <string name="contact_updated_start">Contato \'</string>
-    <string name="contact_updated_end">\' atualizado com sucesso.</string>
-    <string name="contact_deleted_start">Contato \'</string>
-    <string name="contact_deleted_end">\' deletado com sucesso.</string>
+    <string name="contact_saved">Contato \'%s\' salvo com sucesso.</string>
+    <string name="contact_updated">Contato \'%s\' atualizado com sucesso.</string>
+    <string name="contact_deleted">Contato \'%s\' deletado com sucesso.</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
     <string name="delete_contact_title">Deletar Contato</string>
@@ -34,13 +31,19 @@
     <string name="internal_error">Erro interno.</string>
     <string name="error_start">Erro:&#160;</string>
     <string name="username_empty">Erro: Preencha o campo destinado ao nome.</string>
+    <string name="username_min_max_length">Erro: O nome deve possuir de %d à %d caracteres.</string>
     <string name="password_empty">Erro: Preencha o campo destinado à senha.</string>
+    <string name="password_min_max_length">Erro: A senha deve possuir de %d à %d caracteres.</string>
     <string name="confirm_password_empty">Erro: Confirme a senha.</string>
     <string name="passwords_not_equals">Erro: Senhas diferentes.</string>
     <string name="contacts_empty">Não há contatos cadastrados.</string>
     <string name="contacts_default_error">Não foi possível buscar os contatos</string>
     <string name="name_empty">Erro: Preencha o campo destinado ao nome.</string>
+    <string name="name_min_max_length">Erro: O nome deve possuir de %d à %d caracteres.</string>
     <string name="alias_empty">Erro: Preencha o campo destinado ao apelido.</string>
+    <string name="alias_min_max_length">Erro: O apelido deve possuir de %d à %d caracteres.</string>
     <string name="phones_empty">Erro: Você deve adicionar ao menos um telefone.</string>
+    <string name="invalid_phone">Erro: Você deve adicionar um telefone válido.</string>
     <string name="emails_empty">Erro: Você deve adicionar ao menos um e-mail.</string>
+    <string name="invalid_email">Erro: Você deve adicionar um e-mail válido.</string>
 </resources>
